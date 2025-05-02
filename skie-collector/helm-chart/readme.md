@@ -86,7 +86,3 @@ Common issues and solutions:
 ## Support
 
 For questions or issues, contact SKIE support or visit our documentation portal.
-
-## License
-
-Copyright (c) 2024 SKIE. All rights reserved.

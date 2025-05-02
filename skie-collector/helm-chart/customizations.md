@@ -63,7 +63,3 @@ helm upgrade --install skie-k8s-collector \
 ## Support
 
 For issues or questions, contact SKIE support or visit our documentation portal.
-
-## License
-
-Copyright (c) 2024 SKIE. All rights reserved.
