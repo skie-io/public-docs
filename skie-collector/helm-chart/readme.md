@@ -38,7 +38,7 @@ Install the collector using Helm:
 helm upgrade --install skie-k8s-collector \
   --set global.skieToken="your-secret-token" \
   --set global.clusterName="your-cluster-name" \
-  --set customerIdentifier="your-customer-id" \
+  --set global.customerIdentifier="your-customer-id" \
   oci://public.ecr.aws/x7r0w8m0/skie-helm-charts/skie-k8s-collector
 ```
 
@@ -50,7 +50,7 @@ helm upgrade --install --create-namespace --namespace skie-k8s-collector \
   --set global.skieEndpoint="http://your-lattice-endpoint.aws" \
   --set global.skieToken="your-secret-token" \
   --set global.clusterName="your-cluster-name" \
-  --set customerIdentifier="your-customer-id" \
+  --set global.customerIdentifier="your-customer-id" \
   oci://public.ecr.aws/x7r0w8m0/skie-helm-charts/skie-k8s-collector
 ```
 
