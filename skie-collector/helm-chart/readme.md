@@ -71,6 +71,10 @@ To verify the collector is running:
 kubectl get pods -n skie-k8s-collector -l app=skie-k8s-collector
 ```
 
+## Customize your deploy
+
+ [Customizations](customizations.md)
+
 ## Troubleshooting
 
 Common issues and solutions:
