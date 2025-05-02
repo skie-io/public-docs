@@ -58,9 +58,10 @@ helm upgrade --install --create-namespace --namespace skie-k8s-collector \
 
 | Parameter                   | Description                        | Required |
 |-----------------------------|------------------------------------|----------|
-| `global.skieEndpoint`       | SKIE platform endpoint URL         | Yes      |
+| `global.skieEndpoint`       | SKIE platform endpoint URL         | No       |
 | `global.skieToken`          | Authentication token               | Yes      |
 | `global.customerIdentifier` | Your unique customer identifier    | Yes      |
+| `global.clusterName`        | Your unique customer identifier    | Yes      |
 
 ## Verification
 
