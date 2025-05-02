@@ -22,7 +22,7 @@ With a few simple commands using Helm. The setup is straightforward and integrat
 1. **Submit Your AWS Account ID:**  
    To get started, please send your AWS account ID to the SKIE team. This enables us to share necessary resources with your account.
 
-2. **Deploy the CloudFormation Stack ( In case you want to use VPC Private Endpoint):**  
+2. **Deploy the CloudFormation Stack ( In case you want to use VPC Private Endpoint):**
    While the public endpoint is ready-to-go, configuring a Private VPC Endpoint offers advantages:
    * Lower data transfer costs
      Traffic between your VPC and our service stays within the AWS network, reducing cross-AZ or internet egress fees.
@@ -36,7 +36,7 @@ With a few simple commands using Helm. The setup is straightforward and integrat
 
    Want to use the default public endpoint? Just go directly to step 3.
 
-3. **Deploy the Helm Chart:**  
+3. **Deploy the Helm Chart:**
    After the CloudFormation stack is successfully deployed, your team can install the advisor in your Kubernetes cluster using Helm with a few simple commands.
    [Readme](helm-chart/readme.md)
 
