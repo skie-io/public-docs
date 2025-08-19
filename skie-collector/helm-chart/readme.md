@@ -42,12 +42,12 @@ helm upgrade --install skie-k8s-collector \
   oci://public.ecr.aws/x7r0w8m0/skie-helm-charts/skie-k8s-collector
 ```
 
-If you are using a private VPC Endpoint, set the parameter `global.skieEndpoint` and use HTTP instead of HTTPS:
+If you are using a private VPC Endpoint, set the parameter `global.skieEndpoint` and use HTTP instead of HTTPS and add the port 3000:
 
 ```bash
 helm upgrade --install --create-namespace --namespace skie-k8s-collector \
   skie-k8s-collector \
-  --set global.skieEndpoint="http://your-lattice-endpoint.aws" \
+  --set global.skieEndpoint="http://your-lattice-endpoint.aws:3000" \
   --set global.skieToken="your-secret-token" \
   --set global.clusterName="your-cluster-name" \
   --set global.customerIdentifier="your-customer-id" \
