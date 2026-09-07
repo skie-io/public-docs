@@ -30,7 +30,8 @@ With a few simple commands using Helm. The setup is straightforward and integrat
      
     - Traffic between your VPC and our service stays within the AWS network, reducing cross-AZ or internet egress fees.
 
-    - No traffic ever traverses the public internet.
+    - Metrics traffic uses the private endpoint. Chart and container image downloads
+      still require access to their registries, including public ECR for automatic updates.
 
    Once your AWS account ID is shared, Skie team will provide a CloudFormation template so you can deploy the stack. This stack sets up the required AWS infrastructure for the private communication between your K8s and Skie platform.
    [CloudFormation Documentation](cloudformation/readme.md)
@@ -40,6 +41,12 @@ With a few simple commands using Helm. The setup is straightforward and integrat
 3. **Deploy the Helm Chart:**
    After the CloudFormation stack is successfully deployed, your team can install the advisor in your Kubernetes cluster using Helm with a few simple commands.
    [Helm Chart Documentation](helm-chart/readme.md)
+
+   Collector 1.x enables automatic updates by default for plain Helm. Argo CD and
+   Flux users must explicitly disable the in-cluster updater. Existing `0.0.1`
+   installations need the [one-time migration](helm-chart/upgrading.md), including
+   retaining Metrics Server before upgrading. The 1.x guides are prepared for the
+   upcoming stable release; follow their version-availability notice.
 
 
 ## Support

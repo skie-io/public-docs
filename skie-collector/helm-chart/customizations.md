@@ -1,65 +1,93 @@
 # SKIE Kubernetes Collector – Custom Installation Guide
 
-This guide explains how to install the SKIE Collector using your own CI/CD tooling, allowing you to customize parameters and manage secrets according to your environment.
+This guide targets the upcoming [collector 1.x release](readme.md). It explains
+how to provide externally managed configuration and Secrets. Argo CD, Flux, or
+CI-managed releases should explicitly set `autoUpdate.enabled: false` so one
+system controls upgrades.
 
-## Custom ConfigMap and Secret Creation
+## External Secret
 
-The SKIE Collector expects a ConfigMap containing your cluster information and a Secret containing your authentication token. You can create these resources yourself and instruct Helm not to create them automatically.
-
-### 1. Creating the ConfigMap
-
-Create a ConfigMap named `skie-k8s-collector-cm` with the following structure:
-
-```yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: skie-k8s-collector-cm
-data:
-  K8S_CLUSTER_NAME: your-cluster-name
-  SKIE_FULL_ENDPOINT: {{ printf "%s/api/v1/organizations/%s/kubernetes_metrics" .Values.global.skieEndpoint your-customer-id | quote }}
-  CUSTOMER_IDENTIFIER: your-customer-id
-  PROVIDER: aws
-```
-
-- `SKIE_FULL_ENDPOINT` is a dynamically created URL that combines your SKIE endpoint and customer identifier. For example:
-  ```
-  https://zee.skie.io/api/v1/organizations/asbs7d0c-6409-477f-bs12-facg4dmb5ab4/kubernetes_metrics
-  ```
-
-### 2. Creating the Secret
-
-Create a Secret named `skie-k8s-collector-secret` to store your authentication token:
+You can manage only the Secret externally and leave the ConfigMap chart-managed.
+This lets Helm keep endpoint and inventory variables current during upgrades.
+Create the following Secret through your secret-management workflow in the
+**same namespace as the collector release**:
 
 ```yaml
 apiVersion: v1
 kind: Secret
 metadata:
   name: skie-k8s-collector-secret
+  namespace: skie-k8s-collector
 type: Opaque
 stringData:
-  bearertokenauth: your-token
+  bearertokenauth: YOUR_TOKEN
 ```
 
-> **Note:** Both the ConfigMap and Secret must use the exact names above, as the SKIE Collector expects these resource names.
+Set `global.createSecret: false` and omit `global.skieToken` from your Helm values.
+Use the exact Secret name above. Do not commit a real token to source control.
 
-### 3. Disabling Automatic Resource Creation in Helm
+## External ConfigMap
 
-Tell Helm not to create the ConfigMap or Secret by setting the following parameters:
+Only disable `global.createConfigMap` if your automation maintains all the
+following variables. This example uses manual/GitOps updates:
 
-```bash
---set global.createConfigMap=false --set global.createSecret=false
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: skie-k8s-collector-cm
+  namespace: skie-k8s-collector
+data:
+  K8S_CLUSTER_NAME: YOUR_CLUSTER_NAME
+  SKIE_FULL_ENDPOINT: https://app.skie.io/api/v1/organizations/YOUR_CUSTOMER_ID/kubernetes_metrics
+  CUSTOMER_IDENTIFIER: YOUR_CUSTOMER_ID
+  PROVIDER: aws
+  SKIE_CHART_VERSION: "1.0.0"
+  SKIE_AUTOUPDATE_ENABLED: "false"
 ```
 
-### 4. Example Helm Installation Command
+The ConfigMap name is fixed. `SKIE_FULL_ENDPOINT` must be a complete URL, including
+the organization path; raw Helm template expressions in an external ConfigMap are
+not evaluated. For a private endpoint, use
+`http://YOUR_PRIVATE_DNS:3000/api/v1/organizations/YOUR_CUSTOMER_ID/kubernetes_metrics`.
 
-```bash
+Update `SKIE_CHART_VERSION` on every chart upgrade and keep
+`SKIE_AUTOUPDATE_ENABLED` aligned with the release's actual setting. The in-cluster
+updater does not maintain externally managed objects. Keep the ConfigMap
+chart-managed when using automatic updates unless your own automation handles
+these changes.
+
+## Install with both objects externally managed
+
+Create the namespace and both objects before installing. After `1.0.0` is
+published, run:
+
+```sh
 helm upgrade --install skie-k8s-collector \
-  --set global.createConfigMap=false \
-  --set global.createSecret=false \
-  oci://public.ecr.aws/x7r0w8m0/skie-helm-charts/skie-k8s-collector
+  oci://public.ecr.aws/x7r0w8m0/skie-helm-charts/skie-k8s-collector \
+  --namespace skie-k8s-collector --create-namespace --version 1.0.0 \
+  --set global.clusterName=YOUR_CLUSTER_NAME \
+  --set global.customerIdentifier=YOUR_CUSTOMER_ID \
+  --set global.createConfigMap=false --set global.createSecret=false \
+  --set autoUpdate.enabled=false
 ```
 
-## Support
+For an existing `0.0.1` release, complete the [migration](upgrading.md) first.
+When only the Secret is external, leave `global.createConfigMap` at its default
+`true` and configure your endpoint and cluster identity through Helm values.
 
-For issues or questions, contact SKIE support or visit our documentation portal.
+## Apply configuration or token changes
+
+External ConfigMap and Secret updates do not automatically restart the collectors.
+After updating either object, restart both workloads through your deployment
+workflow, or use:
+
+```sh
+kubectl -n skie-k8s-collector rollout restart \
+  daemonset/skie-k8s-collector-opentelemetry-collector-agent
+kubectl -n skie-k8s-collector rollout restart \
+  deployment/skie-k8s-collector-opentelemetry-collector-deployment
+```
+
+Confirm rollout completion and receipt of metrics in SKIE. See
+[automatic updates](automatic-updates.md) for updater settings and audit commands.
