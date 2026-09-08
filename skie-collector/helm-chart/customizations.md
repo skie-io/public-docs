@@ -1,6 +1,6 @@
 # SKIE Kubernetes Collector – Custom Installation Guide
 
-This guide targets the upcoming [collector 1.x release](readme.md). It explains
+This guide targets the [collector 1.x release](readme.md). It explains
 how to provide externally managed configuration and Secrets. Argo CD, Flux, or
 CI-managed releases should explicitly set `autoUpdate.enabled: false` so one
 system controls upgrades.

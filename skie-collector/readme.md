@@ -45,8 +45,7 @@ With a few simple commands using Helm. The setup is straightforward and integrat
    Collector 1.x enables automatic updates by default for plain Helm. Argo CD and
    Flux users must explicitly disable the in-cluster updater. Existing `0.0.1`
    installations need the [one-time migration](helm-chart/upgrading.md), including
-   retaining Metrics Server before upgrading. The 1.x guides are prepared for the
-   upcoming stable release; follow their version-availability notice.
+   retaining Metrics Server before upgrading.
 
 
 ## Support

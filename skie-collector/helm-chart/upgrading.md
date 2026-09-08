@@ -1,7 +1,7 @@
 # Upgrade from collector 0.0.1 to 1.x
 
-This procedure targets the upcoming stable `1.0.0` release. Run it after that
-version is published, with a cluster administrator and Helm 3.14+ or Helm 4.
+This procedure targets the stable `1.0.0` release. Run it with a cluster
+administrator and Helm 3.14+ or Helm 4.
 Version `0.0.1` remains frozen; the first major upgrade is manual.
 
 ## Prepare your release

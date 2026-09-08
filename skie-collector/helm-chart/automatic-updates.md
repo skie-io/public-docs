@@ -1,6 +1,6 @@
 # Automatic collector updates
 
-This page describes the upcoming [collector 1.x release](readme.md). Automatic
+This page describes the [collector 1.x release](readme.md). Automatic
 updates default to `true` for plain Helm installations. The first upgrade from
 `0.0.1` is manual and requires the [Metrics Server migration](upgrading.md).
 
@@ -86,9 +86,12 @@ kubectl -n skie-k8s-collector patch cronjob skie-k8s-collector-updater \
   -p '{"spec":{"suspend":true}}'
 ```
 
-Suspension does not stop a Job already running, and a future Helm upgrade can
-reconcile the setting. To disable permanently, upgrade the **currently installed
-chart version** with `--reset-then-reuse-values --set autoUpdate.enabled=false`.
+Suspension does not stop a Job already running. It does survive Helm upgrades,
+because the chart does not manage the `suspend` field, but it is a live change to a
+single object rather than a stored setting: reinstalling the release, or a future
+chart version that starts managing the field, would clear it. To disable
+permanently, upgrade the **currently installed chart version** with
+`--reset-then-reuse-values --set autoUpdate.enabled=false`.
 For GitOps, commit `autoUpdate.enabled: false` to your controller's values.
 
 ```sh

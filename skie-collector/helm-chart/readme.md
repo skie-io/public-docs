@@ -1,9 +1,9 @@
 # SKIE Kubernetes Collector – Helm Chart Guide
 
-This guide targets collector **1.0.0 and later**. It accompanies the upcoming 1.x
-release; use these commands after stable `1.0.0` is published. Prerelease versions
-such as `1.0.0-rc.1` are for canary validation. Existing `0.0.1` installations must
-follow the [migration guide](upgrading.md) before upgrading.
+This guide targets collector **1.0.0 and later**. Prerelease versions such as
+`1.0.0-rc.5` are for SKIE's own canary validation and are not selected by the
+default update constraint. Existing `0.0.1` installations must follow the
+[migration guide](upgrading.md) before upgrading.
 
 **Automatic updates are enabled by default.** Plain Helm installations receive
 compatible releases within the installed major version. Argo CD and Flux users
@@ -36,7 +36,7 @@ kubectl top nodes
 ```
 
 If your cluster needs Metrics Server and does not already have it, install the
-separate infrastructure chart after its `1.0.0` release is published:
+separate infrastructure chart:
 
 ```sh
 helm install skie-metrics-server \
