@@ -23,11 +23,21 @@ controller. See [automatic updates](automatic-updates.md) for controls and permi
 ## Metrics Server
 
 Collector 1.x no longer installs or owns Metrics Server, and
-`global.installMetricsServer` is ignored. Keep your existing Metrics Server for
-HPA and `kubectl top`; the collector's current receivers do not query
-`metrics.k8s.io` directly.
+`global.installMetricsServer` is ignored. Installing it is now a separate,
+optional command rather than a chart flag.
 
-Check an existing installation with:
+**The collector does not need it.** Nothing the collector reports comes from
+Metrics Server: it reads usage from the kubelet directly, object inventory from
+the API server, and the rest from kube-state-metrics. The HPA series it collects
+are specification and info metrics, which are present whether or not Metrics
+Server is running. If your cluster has none, the collector still reports
+everything it normally does.
+
+Metrics Server matters for **your** cluster, not for SKIE: without it `kubectl
+top` returns "Metrics API not available" and any HorizontalPodAutoscaler reports
+`<unknown>` targets and will not scale.
+
+Check whether you already have one:
 
 ```sh
 kubectl -n kube-system get deployment metrics-server
@@ -35,8 +45,9 @@ kubectl get apiservice v1beta1.metrics.k8s.io -o wide
 kubectl top nodes
 ```
 
-If your cluster needs Metrics Server and does not already have it, install the
-separate infrastructure chart:
+If those commands fail and you want `kubectl top` and working autoscaling,
+install the separate chart. It is independent of the collector — install it
+before or after, in either order:
 
 ```sh
 helm install skie-metrics-server \
@@ -44,8 +55,11 @@ helm install skie-metrics-server \
   --namespace kube-system --version 1.0.0
 ```
 
-Its nine objects are retained on uninstall. For Metrics Server previously
-installed by collector `0.0.1`, use the [migration guide](upgrading.md) instead.
+Its nine objects carry `helm.sh/resource-policy: keep`, so uninstalling the chart
+leaves Metrics Server running and your autoscaling intact; delete the objects
+yourself if you really want it gone. For Metrics Server previously installed by
+collector `0.0.1`, use the [migration guide](upgrading.md) instead — do not
+install this chart on top of it.
 
 ## Install with Helm
 
