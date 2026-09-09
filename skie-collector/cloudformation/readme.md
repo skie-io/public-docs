@@ -27,10 +27,10 @@
 
 This automated setup makes it easier for your team by handling all the technical work needed to securely share Kubernetes metrics, letting you focus on improving and optimizing how you use your resources.
 
-The private endpoint carries metrics traffic. Collector 1.x automatic updates
-also require outbound access to the public chart registry and configured image
-registries; this stack does not provide that access. See
-[automatic updates](../helm-chart/automatic-updates.md#network-and-permissions).
+The private endpoint carries metrics traffic only. Automatic collector updates
+also need outbound access to the public chart registry and the configured image
+registries; this stack does not provide that access. See the
+[Helm installation guide](../helm-chart/readme.md#prerequisites).
 
 ### How to Deploy
 
