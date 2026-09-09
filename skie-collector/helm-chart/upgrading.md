@@ -53,7 +53,7 @@ GitOps users must also follow the controller-specific instructions below.
 ```sh
 helm upgrade skie-k8s-collector \
   oci://public.ecr.aws/x7r0w8m0/skie-helm-charts/skie-k8s-collector \
-  --namespace skie-k8s-collector --version 1.0.0 --reset-then-reuse-values
+  --namespace skie-k8s-collector --version '^1.0.0' --reset-then-reuse-values
 ```
 
 This enables automatic updates unless your stored values explicitly disable them.
@@ -109,7 +109,7 @@ kubectl get hpa --all-namespaces
 ```
 
 Confirm the collectors are ready, Metrics Server and any HPAs remain healthy, and
-SKIE receives metrics with `skie.chart.version=1.0.0`. If automatic updates are
+SKIE receives metrics with a 1.x `skie.chart.version`. If automatic updates are
 enabled, also verify the `skie-k8s-collector-updater` CronJob in your release
 namespace. See [update recovery](automatic-updates.md#stop-audit-and-recover) for
 inspection and pause commands.

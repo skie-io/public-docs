@@ -59,13 +59,12 @@ these changes.
 
 ## Install with both objects externally managed
 
-Create the namespace and both objects before installing. After `1.0.0` is
-published, run:
+Create the namespace and both objects before installing, then run:
 
 ```sh
 helm upgrade --install skie-k8s-collector \
   oci://public.ecr.aws/x7r0w8m0/skie-helm-charts/skie-k8s-collector \
-  --namespace skie-k8s-collector --create-namespace --version 1.0.0 \
+  --namespace skie-k8s-collector --create-namespace --version '^1.0.0' \
   --set global.clusterName=YOUR_CLUSTER_NAME \
   --set global.customerIdentifier=YOUR_CUSTOMER_ID \
   --set global.createConfigMap=false --set global.createSecret=false \

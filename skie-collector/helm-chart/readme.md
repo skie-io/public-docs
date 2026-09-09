@@ -52,7 +52,7 @@ before or after, in either order:
 ```sh
 helm install skie-metrics-server \
   oci://public.ecr.aws/x7r0w8m0/skie-helm-charts/skie-metrics-server \
-  --namespace kube-system --version 1.0.0
+  --namespace kube-system --version '^1.0.0'
 ```
 
 Its nine objects carry `helm.sh/resource-policy: keep`, so uninstalling the chart
@@ -82,7 +82,7 @@ global:
 ```sh
 helm upgrade --install skie-k8s-collector \
   oci://public.ecr.aws/x7r0w8m0/skie-helm-charts/skie-k8s-collector \
-  --namespace skie-k8s-collector --create-namespace --version 1.0.0 \
+  --namespace skie-k8s-collector --create-namespace --version '^1.0.0' \
   --values skie-values.yaml
 ```
 
