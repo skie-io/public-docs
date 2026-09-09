@@ -42,10 +42,9 @@ With a few simple commands using Helm. The setup is straightforward and integrat
    After the CloudFormation stack is successfully deployed, your team can install the advisor in your Kubernetes cluster using Helm with a few simple commands.
    [Helm Chart Documentation](helm-chart/readme.md)
 
-   Collector 1.x enables automatic updates by default for plain Helm. Argo CD and
-   Flux users must explicitly disable the in-cluster updater. Existing `0.0.1`
-   installations need the [one-time migration](helm-chart/upgrading.md), including
-   retaining Metrics Server before upgrading.
+   Automatic updates are enabled by default. Existing `0.0.1` installations need
+   the [one-time migration](helm-chart/upgrading.md), including retaining Metrics
+   Server before upgrading.
 
 
 ## Support

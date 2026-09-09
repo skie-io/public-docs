@@ -1,8 +1,7 @@
 # Upgrade from collector 0.0.1 to 1.x
 
-This procedure targets the stable `1.0.0` release. Run it with a cluster
-administrator and Helm 3.14+ or Helm 4.
-Version `0.0.1` remains frozen; the first major upgrade is manual.
+Run this once with a cluster administrator and Helm 3.14+ or Helm 4. Version
+`0.0.1` remains frozen; the first major upgrade is manual.
 
 ## Prepare your release
 
@@ -46,20 +45,18 @@ kubectl annotate --overwrite \
 
 Verify `helm.sh/resource-policy: keep` on all nine live objects before proceeding.
 Skipping retention can delete Metrics Server and disrupt HPA during the upgrade.
-GitOps users must also follow the controller-specific instructions below.
 
 ## Upgrade with plain Helm
 
 ```sh
 helm upgrade skie-k8s-collector \
   oci://public.ecr.aws/x7r0w8m0/skie-helm-charts/skie-k8s-collector \
-  --namespace skie-k8s-collector --version 1.0.0 --reset-then-reuse-values
+  --namespace skie-k8s-collector --version '^1.0.0' --reset-then-reuse-values
 ```
 
 This enables automatic updates unless your stored values explicitly disable them.
 Add `--set autoUpdate.enabled=false` to opt out, or for releases in `default` or
-system namespaces. Review [updater permissions and network access](automatic-updates.md#network-and-permissions)
-before upgrading. The old `global.installMetricsServer` value is ignored in 1.x.
+system namespaces. The old `global.installMetricsServer` value is ignored in 1.x.
 
 For an older Helm client, update Helm first. Alternatively, export only customer
 overrides to a protected values file and use `--reset-values --values FILE` in
@@ -70,33 +67,6 @@ may leave them in place or arrange explicit adoption by your infrastructure
 manager or the separate `skie-metrics-server` chart. Retention annotations do not
 transfer ownership. Do not roll the collector back to `0.0.1` after adopting those
 objects into another release.
-
-## GitOps migration
-
-Set `autoUpdate.enabled: false` in the collector values **before** the first 1.x
-sync or reconciliation. Flux users also need the Helm retention annotations
-above before upgrading.
-
-Argo CD prunes resources independently of Helm. Before syncing, annotate all nine
-objects with `argocd.argoproj.io/sync-options=Prune=false` as well as the Helm keep
-annotation. If an object already has sync options, preserve them when adding
-`Prune=false`; do not overwrite unrelated options.
-
-```sh
-# For objects with no other Argo sync options:
-kubectl -n kube-system annotate --overwrite \
-  deployment/metrics-server service/metrics-server \
-  serviceaccount/metrics-server rolebinding/metrics-server-auth-reader \
-  argocd.argoproj.io/sync-options=Prune=false
-kubectl annotate --overwrite \
-  clusterrole/system:metrics-server clusterrole/system:aggregated-metrics-reader \
-  clusterrolebinding/system:metrics-server clusterrolebinding/metrics-server:system:auth-delegator \
-  apiservice/v1beta1.metrics.k8s.io argocd.argoproj.io/sync-options=Prune=false
-```
-
-Verify the annotations persist through reconciliation and inspect the sync preview
-before syncing. Retained resources can appear extraneous until explicitly adopted
-by an infrastructure application. See [Argo CD sync options](https://argo-cd.readthedocs.io/en/stable/user-guide/sync-options/#no-prune-resources).
 
 ## Verify the migration
 
@@ -109,7 +79,7 @@ kubectl get hpa --all-namespaces
 ```
 
 Confirm the collectors are ready, Metrics Server and any HPAs remain healthy, and
-SKIE receives metrics with `skie.chart.version=1.0.0`. If automatic updates are
+SKIE receives metrics with a 1.x `skie.chart.version`. If automatic updates are
 enabled, also verify the `skie-k8s-collector-updater` CronJob in your release
-namespace. See [update recovery](automatic-updates.md#stop-audit-and-recover) for
-inspection and pause commands.
+namespace. See the [Helm chart guide](readme.md#automatic-updates) for the pause
+command.
